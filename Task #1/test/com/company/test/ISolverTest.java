@@ -13,10 +13,44 @@ import java.util.Random;
 
 public class ISolverTest extends Assert {
     // TODO: select your class here
-    static Class<? extends ISolver> testingClass = JamaSolver.class;
+    private static final Class<? extends ISolver> testingClass = JamaSolver.class;
 
-    static double precision = 1e-3;
-    static int maxSize = 10;
+    private static final double precision = 1e-3;
+    private static final int maxSize = 10;
+
+    @Test
+    public void basicTest() {
+        check(new double[][]{{1., 2.}, {2., 1.}}, new double[]{5., 4.});
+    }
+
+    @Test
+    public void randomTest() {
+        Random r = new Random();
+        for (int t = 0; t < 10; t++) {
+            int n = r.nextInt(maxSize) + 1;
+            double[][] A = new double[n][n];
+            for (int i = 0; i < n; i++) {
+                A[i] = generateRandomVector(n);
+            }
+            double[] b = generateRandomVector(n);
+            check(A, b);
+        }
+    }
+
+    @Test
+    public void hilbertTest() {
+        for (int t = 0; t < 10; t++) {
+            double[][] A = new double[maxSize][maxSize];
+            double[] b = generateRandomVector(maxSize);
+
+            for (int i = 0; i < maxSize; i++) {
+                for (int j = 0; j < maxSize; j++) {
+                    A[i][j] = 1.0 / (1 + i + j);
+                }
+            }
+            check(A, b);
+        }
+    }
 
 
     void printErrorMessage(String s) {
@@ -85,42 +119,5 @@ public class ISolverTest extends Assert {
         }
         return s.toString();
     }
-
-    @Test
-    public void basicTest() {
-        System.out.println();
-        check(new double[][]{{1., 2.}, {2., 1.}}, new double[]{5., 4.});
-    }
-
-    @Test
-    public void randomTest() {
-        Random r = new Random();
-        for (int t = 0; t < 10; t++) {
-            int n = r.nextInt(maxSize) + 1;
-            double[][] A = new double[n][n];
-            double[] b = generateRandomVector(n);
-
-            for (int i = 0; i < n; i++) {
-                A[i] = generateRandomVector(n);
-            }
-            check(A, b);
-        }
-    }
-
-    @Test
-    public void hilbertTest() {
-        for (int t = 0; t < 10; t++) {
-            double[][] A = new double[maxSize][maxSize];
-            double[] b = generateRandomVector(maxSize);
-
-            for (int i = 0; i < maxSize; i++) {
-                for (int j = 0; j < maxSize; j++) {
-                    A[i][j] = 1.0 / (1 + i + j);
-                }
-            }
-            check(A, b);
-        }
-    }
-
 
 }

@@ -16,12 +16,18 @@ public abstract class ISolver {
 		Matrix result = solve(A, B);
 
 		if (result.getColumnDimension() != 1 || result.getRowDimension() != A.getColumnDimension())
-			throw new SolverException();
+			throw new SolverException("Dimensions expected: " + b.length + " x 1; gained " + result.getRowDimension() + " x " + result.getColumnDimension());
 		return result.transpose().getArray()[0];
 	}
 
 	protected abstract Matrix solve(Matrix A, Matrix B);
 
 	class SolverException extends RuntimeException {
+		public SolverException() {
+		}
+
+		public SolverException(String message) {
+			super(message);
+		}
 	}
 }
