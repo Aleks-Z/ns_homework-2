@@ -11,7 +11,7 @@ public abstract class ISolver {
 						|| A.getColumnDimension() != B.getRowDimension()
 						|| B.getColumnDimension() != 1
 				)
-			throw new SolverException();
+			throw new ParamsException("Invalid parameters' dimensions");
 
 		Matrix result = solve(A, B);
 
@@ -22,11 +22,21 @@ public abstract class ISolver {
 
 	protected abstract Matrix solve(Matrix A, Matrix B);
 
-	class SolverException extends RuntimeException {
+	public class SolverException extends RuntimeException {
 		public SolverException() {
 		}
 
 		public SolverException(String message) {
+			super(message);
+		}
+	}
+
+
+	public class ParamsException extends RuntimeException {
+		public ParamsException() {
+		}
+
+		public ParamsException(String message) {
 			super(message);
 		}
 	}
