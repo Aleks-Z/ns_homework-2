@@ -1,4 +1,4 @@
-package com.company.test;
+package com.company;
 
 import Jama.Matrix;
 import com.company.jamaSolver.JamaSolver;

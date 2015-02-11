@@ -1,4 +1,4 @@
-package com.company.test;
+package com.company;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
