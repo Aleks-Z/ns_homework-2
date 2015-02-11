@@ -3,6 +3,7 @@ package com.company.lang;
 import Jama.Matrix;
 
 public abstract class ISolver {
+
 	public final double[] solve(double[][] a, double[] b) {
 		Matrix A = new Matrix(a), B = new Matrix(new double[][]{b}).transpose();
 		if (
@@ -22,6 +23,5 @@ public abstract class ISolver {
 	protected abstract Matrix solve(Matrix A, Matrix B);
 
 	class SolverException extends RuntimeException {
-
 	}
 }
