@@ -16,11 +16,11 @@ public class HilbertTest extends ISolverTest {
     public static Collection<Object[]> data() {
         ArrayList<Object[]> params = new ArrayList<>();
         for (int t = 0; t < 10; t++) {
-            double[][] A = new double[maxSize][maxSize];
-            double[] b = generateRandomVector(maxSize);
+            double[][] A = new double[defaultMaxSize][defaultMaxSize];
+            double[] b = generateRandomVector(defaultMaxSize);
 
-            for (int i = 0; i < maxSize; i++) {
-                for (int j = 0; j < maxSize; j++) {
+            for (int i = 0; i < defaultMaxSize; i++) {
+                for (int j = 0; j < defaultMaxSize; j++) {
                     A[i][j] = 1.0 / (1 + i + j);
                 }
             }

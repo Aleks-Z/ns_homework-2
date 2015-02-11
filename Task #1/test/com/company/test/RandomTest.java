@@ -18,7 +18,7 @@ public class RandomTest extends ISolverTest {
         Random r = new Random();
         ArrayList<Object[]> params = new ArrayList<>();
         for (int t = 0; t < 10; t++) {
-            int n = r.nextInt(maxSize) + 1;
+            int n = r.nextInt(defaultMaxSize) + 1;
             double[][] A = new double[n][n];
             for (int i = 0; i < n; i++) {
                 A[i] = generateRandomVector(n);

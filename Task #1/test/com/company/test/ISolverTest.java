@@ -15,7 +15,7 @@ public abstract class ISolverTest extends Assert {
     private static final Class<? extends ISolver> testingClass = JamaSolver.class;
 
     private static final double precision = 1e-3;
-    protected static final int maxSize = 10;
+    protected static final int defaultMaxSize = 10;
 
     private double[][] A;
     private double[] b;
