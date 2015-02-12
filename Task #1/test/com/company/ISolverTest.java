@@ -1,6 +1,5 @@
 package com.company;
 
-import Jama.Matrix;
 import com.company.jamaSolver.JamaSolver;
 import com.company.lang.ISolver;
 import org.junit.Assert;
@@ -26,11 +25,13 @@ public abstract class ISolverTest extends Assert {
 
     private static void printErrorMessage(String s) {
         System.err.println(s);
+        System.err.println();
         assertTrue(false);
     }
 
     private static double[] solve(double[][] A, double[] b) {
         ISolver solver = null;
+        // constructor selection
         try {
             try {
                 solver = testingClass.getConstructor(double.class).newInstance(precision);
@@ -46,6 +47,7 @@ public abstract class ISolverTest extends Assert {
         }
         assert solver != null;
 
+        // launch solution
         try {
             return solver.solve(A, b);
         } catch (ISolver.SolverException e){
@@ -57,17 +59,19 @@ public abstract class ISolverTest extends Assert {
     @Test
     public void check() {
         double[] x = solve(A, b);
-        double[] b2 = new Matrix(A).times(new Matrix(new double[][]{x}).transpose()).transpose().getArray()[0];
+        double[] x_etalon = new JamaSolver().solve(A, b); //
+//        double[] b2 = new Matrix(A).times(new Matrix(new double[][]{x}).transpose()).transpose().getArray()[0];           // b2 = A*x
+
         for (int i = 0; i < b.length; i++) {
-            if (Math.abs(b[i] - b2[i]) > precision) {
+            if (Math.abs(x[i] - x_etalon[i]) > precision) {
                 printErrorMessage("Wrong answer \nFor test:\nA:\n" + matrixToString(A) + "\nb:\n" + Arrays.toString(b)
-                        + "\nExpected: " + Arrays.toString(new JamaSolver().solve(A, b))
+                        + "\nExpected: " + Arrays.toString(x_etalon)
                         + "\nGained: " + Arrays.toString(x));
             }
         }
     }
 
-    protected static String matrixToString(double[][] a) {
+    public static String matrixToString(double[][] a) {
         StringBuilder s = new StringBuilder();
         for (int i = 0; i < a.length; i++) {
             s.append("[[");
