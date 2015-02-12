@@ -1,5 +1,7 @@
-package com.company;
+package com.company.testCases;
 
+import Jama.Matrix;
+import com.company.ISolverTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
@@ -16,15 +18,8 @@ public class HilbertTest extends ISolverTest {
     public static Collection<Object[]> data() {
         ArrayList<Object[]> params = new ArrayList<>();
         for (int t = 0; t < 10; t++) {
-            double[][] A = new double[defaultMaxSize][defaultMaxSize];
-            double[] b = generateRandomVector(defaultMaxSize);
-
-            for (int i = 0; i < defaultMaxSize; i++) {
-                for (int j = 0; j < defaultMaxSize; j++) {
-                    A[i][j] = 1.0 / (1 + i + j);
-                }
-            }
-            params.add(new Object[]{A, b});
+            int n = defaultMaxSize;
+            params.add(new Object[]{Matrix.random(n, n).getArray(), Matrix.random(1, n).getArray()[0]});
         }
         return params;
     }
