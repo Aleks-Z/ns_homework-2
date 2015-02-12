@@ -8,7 +8,6 @@ import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
-import java.util.Random;
 
 public abstract class ISolverTest extends Assert {
     // TODO: select your class here
@@ -26,7 +25,7 @@ public abstract class ISolverTest extends Assert {
     }
 
     private static void printErrorMessage(String s) {
-        System.out.println(s);
+        System.err.println(s);
         assertTrue(false);
     }
 
@@ -68,15 +67,6 @@ public abstract class ISolverTest extends Assert {
         }
     }
 
-    protected static double[] generateRandomVector(int n) {
-        Random r = new Random();
-        double[] v = new double[n];
-        for (int i = 0; i < n; i++) {
-            v[i] = r.nextDouble();
-        }
-        return v;
-    }
-
     protected static String matrixToString(double[][] a) {
         StringBuilder s = new StringBuilder();
         for (int i = 0; i < a.length; i++) {
@@ -89,6 +79,7 @@ public abstract class ISolverTest extends Assert {
             if (i != a.length - 1) s.append("\n");
         }
         return s.toString();
+
     }
 
 }

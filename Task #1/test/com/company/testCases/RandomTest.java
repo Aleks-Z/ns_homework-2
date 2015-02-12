@@ -1,5 +1,7 @@
-package com.company;
+package com.company.testCases;
 
+import Jama.Matrix;
+import com.company.ISolverTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
@@ -19,12 +21,7 @@ public class RandomTest extends ISolverTest {
         ArrayList<Object[]> params = new ArrayList<>();
         for (int t = 0; t < 10; t++) {
             int n = r.nextInt(defaultMaxSize) + 1;
-            double[][] A = new double[n][n];
-            for (int i = 0; i < n; i++) {
-                A[i] = generateRandomVector(n);
-            }
-            double[] b = generateRandomVector(n);
-            params.add(new Object[]{A, b});
+            params.add(new Object[]{Matrix.random(n, n).getArray(), Matrix.random(1, n).getArray()[0]});
         }
         return params;
     }
