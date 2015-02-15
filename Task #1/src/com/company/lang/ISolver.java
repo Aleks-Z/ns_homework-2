@@ -5,7 +5,7 @@ import Jama.Matrix;
 public abstract class ISolver {
 
     public final double[] solve(double[][] a, double[] b) {
-        Matrix A = new Matrix(a), B = new Matrix(new double[][]{b}).transpose();
+        Matrix A = new Matrix(a), B = new Matrix(b, b.length);
         if (
                 A.getColumnDimension() != A.getRowDimension()
                         || A.getColumnDimension() != B.getRowDimension()
