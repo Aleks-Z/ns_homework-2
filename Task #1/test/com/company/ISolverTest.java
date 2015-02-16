@@ -9,9 +9,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
 public abstract class ISolverTest extends Assert {
-    // TODO: select your class here
-    private static final Class<? extends ISolver> testingClass = JamaSolver.class;
-
     private static final double precision = 1e-3;
     protected static final int defaultMaxSize = 10;
 
@@ -30,16 +27,17 @@ public abstract class ISolverTest extends Assert {
     }
 
     private static double[] solve(double[][] A, double[] b) {
+        Class<? extends ISolver> testedClass = ISolverTestedClass.testedClass;
         ISolver solver = null;
         // constructor selection
         try {
             try {
-                solver = testingClass.getConstructor(double.class).newInstance(precision);
+                solver = testedClass.getConstructor(double.class).newInstance(precision);
             } catch (NoSuchMethodException e) {
                 try {
-                    solver = testingClass.getConstructor().newInstance();
+                    solver = testedClass.getConstructor().newInstance();
                 } catch (NoSuchMethodException e1) {
-                    printErrorMessage("No appropriate constructor found in class " + testingClass.getName() + "; <init>() or <init>(double) required");
+                    printErrorMessage("No appropriate constructor found in class " + testedClass.getName() + "; <init>() or <init>(double) required");
                 }
             }
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
