@@ -9,9 +9,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
 public abstract class ISolverTest extends Assert {
-    // TODO: select your class here
-    private static final Class<? extends ISolver> testingClass = JamaSolver.class;
-
     private static final double precision = 1e-3;
     protected static final int defaultMaxSize = 10;
 
@@ -30,6 +27,7 @@ public abstract class ISolverTest extends Assert {
     }
 
     private static double[] solve(double[][] A, double[] b) {
+        Class<? extends ISolver> testingClass = ISolverTestedClass.testingClass;
         ISolver solver = null;
         // constructor selection
         try {
