@@ -1,16 +1,16 @@
 package com.company.conjugateGradient;
 
 import Jama.Matrix;
-import com.company.lang.ISolverIterative;
+import com.company.lang.ISolver;
 
-public abstract class ConjugateGradient extends ISolverIterative {
+public abstract class ConjugateGradient extends ISolver {
     private Matrix x, r, p;
 
     private final int n;
     private int i;
 
-    public ConjugateGradient(double[][] A, double[] b, double eps) {
-        super(new Matrix(A).transpose().times(new Matrix(A)).getArray(), new Matrix(A).transpose().times(new Matrix(b, b.length)).getColumnPackedCopy(), eps);
+    public ConjugateGradient(double[][] A, double[] b) {
+        super(new Matrix(A).transpose().times(new Matrix(A)).getArray(), new Matrix(A).transpose().times(new Matrix(b, b.length)).getColumnPackedCopy());
         n = b.length;
         x = new Matrix(new double[n], n);
         r = this.b.minus(this.A.times(x));
@@ -29,13 +29,8 @@ public abstract class ConjugateGradient extends ISolverIterative {
     }
 
     @Override
-    protected double getPosterioriEstimation() {
-        return 0;
-    }
-
-    @Override
-    protected boolean isPreciousEnoungh(Matrix deltaX) {
-        return i > n + 5;
+    protected boolean isPreciousEnough(Matrix deltaX) {
+        return i > n;
     }
 
     protected static double scalarMultiply(Matrix a, Matrix b) {

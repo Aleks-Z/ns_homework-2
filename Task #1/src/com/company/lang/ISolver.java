@@ -7,12 +7,10 @@ import java.util.Iterator;
 
 public abstract class ISolver implements Iterable<double[]> {
     protected final Matrix A, b;
-    protected final double eps;
 
-    public ISolver(double[][] A, double[] b, double eps) {
+    public ISolver(double[][] A, double[] b) {
         this.A = new Matrix(A);
         this.b = new Matrix(b, b.length);
-        this.eps = eps;
         if (
                 this.A.getColumnDimension() != this.A.getRowDimension()
                         || this.A.getColumnDimension() != this.b.getRowDimension()
@@ -29,6 +27,8 @@ public abstract class ISolver implements Iterable<double[]> {
         return ans;
     }
 
+    //TODO: add other methods using for(double[] x: this){}
+
 
     @Override
     public Iterator<double[]> iterator() {
@@ -43,13 +43,14 @@ public abstract class ISolver implements Iterable<double[]> {
         public ISolverIterator() {
             double[] q = new double[A.getRowDimension()];
             Arrays.fill(q, Double.POSITIVE_INFINITY);
-            prevX = new Matrix(q, q.length);
-            curX = new Matrix(new double[q.length], q.length).minus(prevX);
+            prevX = new Matrix(q, q.length);                                           // = {+Inf, +Inf, ..., +Inf}
+            curX = new Matrix(new double[q.length], q.length).minus(prevX);            // = {-Inf, -Inf, ..., -Inf}
+            // ||curX - prevX|| = +Inf initially  =>  isPreciousEnough feels good
         }
 
         @Override
         public boolean hasNext() {
-            return !ISolver.this.isPreciousEnoungh(curX.minus(prevX));
+            return !ISolver.this.isPreciousEnough(curX.minus(prevX));
         }
 
         @Override
@@ -64,7 +65,7 @@ public abstract class ISolver implements Iterable<double[]> {
 
     protected abstract Matrix countNext();
 
-    protected abstract boolean isPreciousEnoungh(Matrix deltaX);
+    protected abstract boolean isPreciousEnough(Matrix deltaX);
 
 
     public class SolverException extends RuntimeException {

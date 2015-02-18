@@ -2,13 +2,10 @@ package com.company.lang;
 
 import Jama.Matrix;
 
-/**
- * Created by asus on 18.02.2015.
- */
 public abstract class ISolverNonIterative extends ISolver {
 
     public ISolverNonIterative(double[][] A, double[] b) {
-        super(A, b, 0.0);
+        super(A, b);
     }
 
     private boolean counted = false;
@@ -22,7 +19,7 @@ public abstract class ISolverNonIterative extends ISolver {
     }
 
     @Override
-    protected boolean isPreciousEnoungh(Matrix m) {
+    protected boolean isPreciousEnough(Matrix m) {
         return counted;
     }
 }

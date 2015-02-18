@@ -4,8 +4,8 @@ import Jama.Matrix;
 
 public class DaiYuan extends ConjugateGradient {
 
-    public DaiYuan(double[][] A, double[] b, double eps) {
-        super(A, b, eps);
+    public DaiYuan(double[][] A, double[] b) {
+        super(A, b);
     }
 
     @Override
