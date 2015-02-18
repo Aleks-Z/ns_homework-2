@@ -2,25 +2,69 @@ package com.company.lang;
 
 import Jama.Matrix;
 
-public abstract class ISolver {
+import java.util.Arrays;
+import java.util.Iterator;
 
-    public final double[] solve(double[][] a, double[] b) {
-        Matrix A = new Matrix(a), B = new Matrix(b, b.length);
+public abstract class ISolver implements Iterable<double[]> {
+    protected final Matrix A, b;
+    protected final double eps;
+
+    public ISolver(double[][] A, double[] b, double eps) {
+        this.A = new Matrix(A);
+        this.b = new Matrix(b, b.length);
+        this.eps = eps;
         if (
-                A.getColumnDimension() != A.getRowDimension()
-                        || A.getColumnDimension() != B.getRowDimension()
-                        || B.getColumnDimension() != 1
+                this.A.getColumnDimension() != this.A.getRowDimension()
+                        || this.A.getColumnDimension() != this.b.getRowDimension()
+                        || this.b.getColumnDimension() != 1
                 )
             throw new ParamsException("Invalid parameters' dimensions\n");
-
-        Matrix result = solve(A, B);
-
-        if (result.getColumnDimension() != 1 || result.getRowDimension() != A.getColumnDimension())
-            throw new SolverException("Illegal return value of method \"solve\" \n\tdimensions expected: " + b.length + " x 1 \n\tgained: " + result.getRowDimension() + " x " + result.getColumnDimension() + "\n");
-        return result.transpose().getArray()[0];
     }
 
-    protected abstract Matrix solve(Matrix A, Matrix b);
+    public double[] solve() {
+        double[] ans = null;
+        for (double[] x : this) {
+            ans = x;
+        }
+        return ans;
+    }
+
+
+    @Override
+    public Iterator<double[]> iterator() {
+        return new ISolverIterator();
+    }
+
+
+    private class ISolverIterator implements Iterator<double[]> {
+        private Matrix prevX;
+        private Matrix curX;
+
+        public ISolverIterator() {
+            double[] q = new double[A.getRowDimension()];
+            Arrays.fill(q, Double.POSITIVE_INFINITY);
+            prevX = new Matrix(q, q.length);
+            curX = new Matrix(new double[q.length], q.length).minus(prevX);
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !ISolver.this.isPreciousEnoungh(curX.minus(prevX));
+        }
+
+        @Override
+        public double[] next() {
+            prevX = curX;
+            curX = countNext();
+            if (curX.getColumnDimension() != 1 || curX.getRowDimension() != A.getColumnDimension())
+                throw new SolverException("Illegal return value of method \"countNext\" \n\tdimensions expected: " + A.getColumnDimension() + " x 1 \n\tgained: " + curX.getRowDimension() + " x " + curX.getColumnDimension() + "\n");
+            return curX.getColumnPackedCopy();
+        }
+    }
+
+    protected abstract Matrix countNext();
+
+    protected abstract boolean isPreciousEnoungh(Matrix deltaX);
 
 
     public class SolverException extends RuntimeException {
