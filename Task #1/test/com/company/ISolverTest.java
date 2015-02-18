@@ -32,10 +32,10 @@ public abstract class ISolverTest extends Assert {
         // constructor selection
         try {
             try {
-                solver = testedClass.getConstructor(double.class).newInstance(precision);
+                solver = testedClass.getConstructor(double[][].class, double[].class, double.class).newInstance(A, b, precision);
             } catch (NoSuchMethodException e) {
                 try {
-                    solver = testedClass.getConstructor().newInstance();
+                    solver = testedClass.getConstructor(double[][].class, double[].class).newInstance(A, b);
                 } catch (NoSuchMethodException e1) {
                     printErrorMessage("No appropriate constructor found in class " + testedClass.getName() + "; <init>() or <init>(double) required");
                 }
@@ -47,7 +47,7 @@ public abstract class ISolverTest extends Assert {
 
         // launch solution
         try {
-            return solver.solve(A, b);
+            return solver.solve();
         } catch (ISolver.SolverException e){
             printErrorMessage(e.getMessage());
         }
@@ -57,7 +57,7 @@ public abstract class ISolverTest extends Assert {
     @Test
     public void check() {
         double[] x = solve(A, b);
-        double[] x_etalon = new JamaSolver().solve(A, b); //
+        double[] x_etalon = new JamaSolver(A, b).solve(); //
 //        double[] b2 = new Matrix(A).times(new Matrix(new double[][]{x}).transpose()).transpose().getArray()[0];           // b2 = A*x
 
         for (int i = 0; i < b.length; i++) {

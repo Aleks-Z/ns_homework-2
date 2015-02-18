@@ -1,11 +1,16 @@
 package com.company.jamaSolver;
 
 import Jama.Matrix;
-import com.company.lang.ISolver;
+import com.company.lang.ISolverNonIterative;
 
-public class JamaSolver extends ISolver {
-    @Override
-    protected Matrix solve(Matrix A, Matrix B) {
-        return A.solve(B);
+public class JamaSolver extends ISolverNonIterative {
+    public JamaSolver(double[][] A, double[] b) {
+        super(A, b);
     }
+
+    @Override
+    protected Matrix count() {
+        return A.solve(b);
+    }
+
 }
