@@ -2,6 +2,9 @@ package com.company.lang;
 
 import Jama.Matrix;
 
+/**
+ * Single-iteration solutions
+ */
 public abstract class ISolverNonIterative extends ISolver {
 
     public ISolverNonIterative(double[][] A, double[] b) {
@@ -10,6 +13,9 @@ public abstract class ISolverNonIterative extends ISolver {
 
     private boolean counted = false;
 
+    /**
+     * Calculates x
+     */
     protected abstract Matrix count();
 
     @Override

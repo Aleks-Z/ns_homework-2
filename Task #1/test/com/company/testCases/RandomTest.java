@@ -20,7 +20,7 @@ public class RandomTest extends ISolverTest {
         Random r = new Random();
         ArrayList<Object[]> params = new ArrayList<>();
         for (int t = 0; t < 10; t++) {
-            int n = r.nextInt(defaultMaxSize) + 1;
+            int n = r.nextInt(100) + 1;
             params.add(new Object[]{Matrix.random(n, n).getArray(), Matrix.random(1, n).getArray()[0]});
         }
         return params;
