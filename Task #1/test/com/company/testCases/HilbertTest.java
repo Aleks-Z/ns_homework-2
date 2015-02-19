@@ -17,9 +17,14 @@ public class HilbertTest extends ISolverTest {
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
         ArrayList<Object[]> params = new ArrayList<>();
-        for (int t = 0; t < 10; t++) {
-            int n = defaultMaxSize;
-            params.add(new Object[]{Matrix.random(n, n).getArray(), Matrix.random(1, n).getArray()[0]});
+        for (int n = 1; n < 10; n++) {
+            double[][] A = new double[n][n];
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    A[i][j] = 1. / (i + j + 1);
+                }
+            }
+            params.add(new Object[]{A, Matrix.random(1, n).getArray()[0]});
         }
         return params;
     }

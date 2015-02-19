@@ -1,7 +1,9 @@
 package com.company;
 
+import Jama.Matrix;
 import com.company.jamaSolver.JamaSolver;
 import com.company.lang.ISolver;
+import com.company.lang.SolutionProcessing;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -9,8 +11,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
 public abstract class ISolverTest extends Assert {
+
     private static final double precision = 1e-3;
-    protected static final int defaultMaxSize = 10;
 
     private double[][] A;
     private double[] b;
@@ -20,21 +22,32 @@ public abstract class ISolverTest extends Assert {
         this.b = b;
     }
 
+    /**
+     * Prints message and fails this test case
+     *
+     * @param s - message
+     */
     private static void printErrorMessage(String s) {
         System.err.println(s);
         System.err.println();
         assertTrue(false);
     }
 
+    /**
+     * Gets solution for equality provided with {@code ISolverTestedClass.testedClass} class
+     */
     private static double[] solve(double[][] A, double[] b) {
         Class<? extends ISolver> testedClass = ISolverTestedClass.testedClass;
         ISolver solver = null;
+
         // constructor selection
         try {
             try {
+                // attempt to call <init>(A, b, eps)
                 solver = testedClass.getConstructor(double[][].class, double[].class, double.class).newInstance(A, b, precision);
             } catch (NoSuchMethodException e) {
                 try {
+                    // attempt to call <init>(A, b)
                     solver = testedClass.getConstructor(double[][].class, double[].class).newInstance(A, b);
                 } catch (NoSuchMethodException e1) {
                     printErrorMessage("No appropriate constructor found in class " + testedClass.getName() + "; <init>() or <init>(double) required");
@@ -47,28 +60,30 @@ public abstract class ISolverTest extends Assert {
 
         // launch solution
         try {
-            return solver.solve();
-        } catch (ISolver.SolverException e){
+            return SolutionProcessing.solve(solver);
+        } catch (ISolver.SolverException e) {
             printErrorMessage(e.getMessage());
         }
         return null;
     }
 
+    /**
+     * For this.A and this.b compares solution provided with {@code ISolverTestedClass.testedClass} class
+     * with etalon one and asserts difference suits to necessary precision
+     */
     @Test
     public void check() {
         double[] x = solve(A, b);
-        double[] x_etalon = new JamaSolver(A, b).solve(); //
-//        double[] b2 = new Matrix(A).times(new Matrix(new double[][]{x}).transpose()).transpose().getArray()[0];           // b2 = A*x
-
-        for (int i = 0; i < b.length; i++) {
-            if (Math.abs(x[i] - x_etalon[i]) > precision) {
-                printErrorMessage("Wrong answer \nFor test:\nA:\n" + matrixToString(A) + "\nb:\n" + Arrays.toString(b)
-                        + "\nExpected: " + Arrays.toString(x_etalon)
-                        + "\nGained: " + Arrays.toString(x));
-            }
+        double[] x_etalon = SolutionProcessing.solve(new JamaSolver(A, b));
+        if (!(new Matrix(x_etalon, x_etalon.length).minus(new Matrix(x, x.length)).normInf() < precision)) {
+            printErrorMessage("Wrong answer \nFor test:\nA:\n" + matrixToString(A) + "\nb:\n" + Arrays.toString(b) + "\nExpected: " + Arrays.toString(x_etalon) + "\nGained: " + Arrays.toString(x));
         }
+
     }
 
+    /**
+     * toString for matrix
+     */
     public static String matrixToString(double[][] a) {
         StringBuilder s = new StringBuilder();
         for (int i = 0; i < a.length; i++) {
