@@ -19,8 +19,20 @@ public class SolutionProcessing {
      * Writes all versions of x into Excel table.
      * In case of number of iterations is too large, stops somewhere.
      */
-    public static void writeToXls(ISolver solution, Document doc){
-        // TODO: write something here
+    public static void writeXtoXls(ISolver solution, Document doc){
+        for (double[] x : solution) {
+            // TODO: write something here
+        }
+    }
+
+    /**
+     * Writes values of x{i+1} - x{i} into Excel table.
+     * @param solution some solution
+     * @param start index from which writing will be started. All x{i+1} - x{i} with less indices are skipped.
+     * @param doc file where data will be written
+     */
+    public static void writeDeltaXtoXls(ISolver solution, int start, Document doc){
+        // TODO: and something here please
     }
 
     /**
