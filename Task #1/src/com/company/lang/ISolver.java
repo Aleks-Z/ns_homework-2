@@ -21,6 +21,16 @@ public abstract class ISolver implements Iterable<double[]> {
             throw new ParamsException("Invalid parameters' dimensions\n");
     }
 
+    public double[] solve(){
+        double[] ans = null;
+        for (double[] x : this) {
+            ans = x;
+        }
+        assert ans != null;
+
+        return ans;
+    }
+
 
     @Override
     public Iterator<double[]> iterator() {

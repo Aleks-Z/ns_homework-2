@@ -1,6 +1,6 @@
 package com.company;
 
-import com.company.conjugateGradient.DaiYuan;
+import com.company.jamaSolver.JamaSolver;
 import com.company.lang.ISolver;
 
 public class ISolverTestedClass {
