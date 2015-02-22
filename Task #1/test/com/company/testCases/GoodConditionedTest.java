@@ -17,7 +17,7 @@ public class GoodConditionedTest extends ISolverTest {
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
         ArrayList<Object[]> params = new ArrayList<>();
-        for (int t = 0; t < 1000; t++) {
+        for (int t = 0; t < 10; t++) {
             int n = 10;
 
             Matrix matrix = Matrix.random(n, n);
@@ -28,7 +28,7 @@ public class GoodConditionedTest extends ISolverTest {
                         sum += Math.abs(matrix.get(i, j));
                     }
                 }
-                matrix.set(i, i, 2 * sum + 0.1);
+                matrix.set(i, i, 2 * sum);
             }
 
             params.add(new Object[]{matrix.getArray(), Matrix.random(1, n).getArray()[0]});

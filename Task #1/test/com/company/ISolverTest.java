@@ -11,8 +11,8 @@ import java.util.Arrays;
 
 public abstract class ISolverTest extends Assert {
 
-    private static final double precision = 0.001;
-    private static final int maxIterationsNum = 1000;
+    private static final double precision = 1e-3;
+    private static final int maxIterationsNum = 100000;
 
     private double[][] A;
     private double[] b;
