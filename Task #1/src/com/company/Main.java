@@ -18,8 +18,10 @@ public class Main {
         File inFile = new File("Template.xlsx");
         File outFile = new File("Results.xlsx");
 
-        int n = 10;
-        ISolver solver = new DaiYuan(Matrix.random(n, n).getArray(), Matrix.random(1, n).getColumnPackedCopy());
+        // initialize solver
+        Matrix A = new Matrix(new double[][]{{1., 2.}, {2., 1.}});
+        Matrix b = new Matrix(new double[]{5., 4.}, 2);
+        ISolver solver = new DaiYuan(A.getArray(), b.getColumnPackedCopy());
 
         Workbook workbook;
         try (InputStream in = new BufferedInputStream(new FileInputStream(inFile))) {
@@ -27,7 +29,7 @@ public class Main {
             workbook = new SXSSFWorkbook(new XSSFWorkbook(in), 100);
             Sheet sheet = workbook.getSheetAt(0);
 
-//            insert values (into file copy which is stored into memory)
+//            insert values (into file copy which is stored into memory / temp file when necessary)
             int rowNum = 1;
             for (double[] x : solver) {
                 Row row = sheet.createRow(rowNum++);
