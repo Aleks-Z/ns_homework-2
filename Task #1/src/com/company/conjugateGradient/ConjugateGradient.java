@@ -30,7 +30,7 @@ public abstract class ConjugateGradient extends ISolver {
 
     @Override
     protected boolean isPreciousEnough(Matrix deltaX) {
-        return /*i >= n + 1 ||*/ p.normInf() < 1e-100 || deltaX.norm2() < 1e-8;
+        return /*i >= n + 1 ||*/ p.normInf() < 1e-100;
     }
 
     protected static double scalarMultiply(Matrix a, Matrix b) {
