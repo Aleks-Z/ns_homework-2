@@ -7,5 +7,5 @@ import com.company.seidel.Seidel;
 
 public class ISolverTestedClass {
     // TODO: select your class here
-    public static final Class<? extends ISolver> testedClass = Jacobi.class;
+    public static final Class<? extends ISolver> testedClass = Seidel.class;
 }

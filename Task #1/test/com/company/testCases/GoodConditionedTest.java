@@ -17,7 +17,7 @@ public class GoodConditionedTest extends ISolverTest {
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
         ArrayList<Object[]> params = new ArrayList<>();
-        for (int t = 0; t < 10; t++) {
+        for (int t = 0; t < 1000; t++) {
             int n = 10;
 
             Matrix matrix = Matrix.random(n, n);

@@ -53,13 +53,7 @@ public abstract class ISolver implements Iterable<double[]> {
 
         @Override
         public boolean hasNext() {
-            Boolean b = !ISolver.this.isPreciousEnough(curX.minus(prevX));
-            if (!b) {
-                int x = 10;
-                double norm = curX.minus(prevX).norm1();
-                int y = 0; // todo
-            }
-            return b;
+            return !ISolver.this.isPreciousEnough(curX.minus(prevX));
         }
 
         @Override
