@@ -43,13 +43,10 @@ public class GaussSolver extends ISolverNonIterative {
 				sum += A.get(i, j) * x[j];
 			x[i] = (b.get(i, 0) - sum) / A.get(i, i);
 		}
-		return new Matrix(x, 1);
+		return new Matrix(x, x.length);
 	}
 
-	@Override
-	public double[] solve() {
-		return count().getRowPackedCopy();
-	}
+
 
 	private void swap(int i1, int i2) {
 		for (int i = 0; i < A.getColumnDimension(); i++) {
