@@ -53,12 +53,18 @@ public abstract class ISolver implements Iterable<double[]> {
 
         @Override
         public boolean hasNext() {
-            return !ISolver.this.isPreciousEnough(curX.minus(prevX));
+            Boolean b = !ISolver.this.isPreciousEnough(curX.minus(prevX));
+            if (!b) {
+                int x = 10;
+                double norm = curX.minus(prevX).norm1();
+                int y = 0; // todo
+            }
+            return b;
         }
 
         @Override
         public double[] next() {
-            prevX = curX;
+            prevX = curX.copy();
             curX = countNext();
 
             // check dimensions of given matrix are correct
