@@ -58,7 +58,7 @@ public abstract class ISolver implements Iterable<double[]> {
 
         @Override
         public double[] next() {
-            prevX = curX;
+            prevX = curX.copy();
             curX = countNext();
 
             // check dimensions of given matrix are correct
