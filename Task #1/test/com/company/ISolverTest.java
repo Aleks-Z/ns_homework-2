@@ -6,7 +6,6 @@ import com.company.lang.ISolver;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
 public abstract class ISolverTest extends Assert {
@@ -37,30 +36,9 @@ public abstract class ISolverTest extends Assert {
      * Gets solution for equality provided with {@code ISolverTestedClass.testedClass} class
      */
     private static double[] solve(double[][] A, double[] b) {
-        Class<? extends ISolver> testedClass = ISolverTestedClass.testedClass;
-        ISolver solver = null;
-
-        // constructor selection
+        ISolver testedSolver = ISolverTestedClass.createTestedSolver(A, b, precision);
         try {
-            try {
-                // attempt to call <init>(A, b, eps, maxIterationsNum)
-                solver = testedClass.getConstructor(double[][].class, double[].class, double.class, int.class).newInstance(A, b, precision, maxIterationsNum);
-            } catch (NoSuchMethodException e) {
-                try {
-                    // attempt to call <init>(A, b)
-                    solver = testedClass.getConstructor(double[][].class, double[].class).newInstance(A, b);
-                } catch (NoSuchMethodException e1) {
-                    printErrorMessage("No appropriate constructor found in class " + testedClass.getName() + "; <init>(double[][], double[]) or <init>(double[][], double[], double, int) required");
-                }
-            }
-        } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        assert solver != null;
-
-        // launch solution
-        try {
-            return solver.solve();
+            return testedSolver.solve();
         } catch (ISolver.SolverException e) {
             printErrorMessage(e.getMessage());
         }

@@ -1,9 +1,11 @@
 package com.company;
 
-import com.company.jacobi.Jacobi;
+import com.company.jamaSolver.JamaSolver;
 import com.company.lang.ISolver;
 
 public class ISolverTestedClass {
-    // TODO: select your class here
-    public static final Class<? extends ISolver> testedClass = Jacobi.class;
+    // TODO: construct your solver here
+    public static ISolver createTestedSolver(double[][] A, double[] b, double eps){
+        return new JamaSolver(A, b);
+    }
 }
