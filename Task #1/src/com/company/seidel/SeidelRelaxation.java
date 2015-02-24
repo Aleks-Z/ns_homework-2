@@ -41,8 +41,8 @@ public class SeidelRelaxation extends ISolverIterative{
             }
         }
 
-        double matrixFirstNorm = matrixFirst.normF();
-        double matrixSecondNorm = matrixSecond.normF();
+        double matrixFirstNorm = matrixFirst.normInf();
+        double matrixSecondNorm = matrixSecond.normInf();
         posterioriEps = (1.0 - matrixFirstNorm) * eps / (matrixSecondNorm);
     }
 
@@ -74,7 +74,7 @@ public class SeidelRelaxation extends ISolverIterative{
     }
 
     protected boolean isPreciousEnough(Matrix deltaX) {
-        return counter >= maxIterationsNum || deltaX.normF() < posterioriEps;
+        return counter >= maxIterationsNum || deltaX.normInf() < posterioriEps;
 
     }
 }
