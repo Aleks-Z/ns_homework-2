@@ -24,7 +24,6 @@ public class SolutionHandlers {
                 new GaussSolver(A, b),
                 new Jacobi(A, b, eps, maxIterationsNum),
                 new Seidel(A, b, eps, maxIterationsNum),
-                new SeidelRelaxation(A, b, eps, maxIterationsNum, 0.5),
                 new SeidelRelaxation(A, b, eps, maxIterationsNum, 1.5)
         };
     }
