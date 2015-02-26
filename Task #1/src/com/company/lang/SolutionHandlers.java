@@ -24,7 +24,7 @@ public class SolutionHandlers {
                 new GaussSolver(A, b),
                 new Jacobi(A, b, eps, maxIterationsNum),
                 new Seidel(A, b, eps, maxIterationsNum),
-                new SeidelRelaxation(A, b, eps, maxIterationsNum, 1.5)
+                new SeidelRelaxation(A, b, eps, maxIterationsNum, 1)
         };
     }
 
@@ -41,13 +41,13 @@ public class SolutionHandlers {
         File inFile = new File("Template.xlsx");      // contains diagram, using it as basement
         File outFile = new File("Results.xlsx");
         int maxIterationsNum = 1000;
-        Function<double[], Double> toAns = componentNum == -1 ?            // returns specified component of x / norm of x when componentNum == -1
-                (double[] x) -> new Matrix(x, x.length).normInf() :
-                (double[] x) -> x[componentNum];
+        Function<Matrix, Double> getDiffrence = componentNum == -1 ?            // returns specified component of x / norm of x when componentNum == -1
+                Matrix::normInf :                                               //
+                (Matrix x) -> Math.abs(x.get(componentNum, 0));
 
         // initialize solvers
         ISolver[] solvers = constructAllSolutions(A, b, eps, maxIterationsNum);
-        double etalon_ans = toAns.apply(new JamaSolver(A, b).solve());
+        double[] etalon_x = new JamaSolver(A, b).solve();
 
         Workbook workbook;
         try (InputStream in = new BufferedInputStream(new FileInputStream(inFile))) {
@@ -66,10 +66,21 @@ public class SolutionHandlers {
             for (int i = 0; i < solvers.length; i++) {
                 int rowNum = 1;
                 for (double[] x : solvers[i]) {
-                    Row row = sheet.getLastRowNum() < rowNum ? sheet.createRow(rowNum++) : sheet.getRow(rowNum++);
-                    row.createCell(i + 1).setCellValue(Math.log10(Math.max(Math.abs(toAns.apply(x) - etalon_ans), eps)));
+                    Row row;
+                    if (sheet.getLastRowNum() < rowNum){
+                        row = sheet.createRow(rowNum++);
+                        row.createCell(0).setCellValue(rowNum - 1);
+                    }
+                    else row = sheet.getRow(rowNum++);
+
+                    row.createCell(i + 1).setCellValue(Math.log10(Math.max(
+                            getDiffrence.apply(new Matrix(x, x.length).minus(new Matrix(etalon_x, etalon_x.length))),
+                            eps
+                    )));
+                    int k = 6;
                 }
             }
+
         }
         try (OutputStream out = new BufferedOutputStream(new FileOutputStream(outFile))) {
 //            write to result file
