@@ -9,8 +9,8 @@ public abstract class ISolver implements Iterable<double[]> {
 	protected final Matrix A, b;
 
 	public ISolver(double[][] A, double[] b) {
-		this.A = new Matrix(A);
-		this.b = new Matrix(b, b.length);
+		this.A = new Matrix(A).copy();
+		this.b = new Matrix(b, b.length).copy();
 
 		// check given dimensions are correct
 		if (
@@ -21,7 +21,7 @@ public abstract class ISolver implements Iterable<double[]> {
 			throw new ParamsException("Invalid parameters' dimensions\n");
 	}
 
-	public double[] solve() {
+	public final double[] solve() {
 		double[] ans = null;
 		for (double[] x : this) {
 			ans = x;
