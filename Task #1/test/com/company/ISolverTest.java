@@ -2,11 +2,13 @@ package com.company;
 
 import Jama.Matrix;
 import com.company.jamaSolver.JamaSolver;
+import com.company.lang.Equation;
 import com.company.lang.ISolver;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.function.Function;
 
 public abstract class ISolverTest extends Assert {
 
@@ -77,7 +79,7 @@ public abstract class ISolverTest extends Assert {
             if (i != a.length - 1) s.append("\n");
         }
         return s.toString();
-
     }
 
+    protected static final Function<Equation, Object[]> asObject = (Equation eq) -> new Object[]{eq.A, eq.b};
 }
