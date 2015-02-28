@@ -94,4 +94,5 @@ public abstract class ISolver implements Iterable<double[]> {
 			super(message);
 		}
 	}
+
 }

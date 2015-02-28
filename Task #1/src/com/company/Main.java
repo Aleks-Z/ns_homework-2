@@ -1,38 +1,40 @@
 package com.company;
 
-import Jama.Matrix;
+import com.company.lang.Equation;
+import com.company.lang.EquationFactory;
 import com.company.lang.SolutionHandlers;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 import java.io.IOException;
 
 public class Main {
-	public static void main(String[] args) throws IOException, InvalidFormatException {
-//		101 way to initialize equality, chapter 0
-        int n = 10;
-		double[][] A = Matrix.random(n, n).getArray();
-		double[] b = Matrix.random(n, 1).getRowPackedCopy();
+    public static void main(String[] args) throws IOException, InvalidFormatException {
+//		101 way to initialize equation, chapter 0
 
-//		double[][] A = new double[][]{{2., 1.}, {1., 2.}};
-//		double[] b = new double[]{5., 4.};
+//      int n = 10;
+//		Equation equation = new Equation(Matrix.random(n, n), Matrix.random(n, 1));
+        // does the same as:
+//		Equation equation = EquationFactory.Random.apply(10);
 
-//		for using this you may need to mark "test" folder as sources root (Right click on "test" -> Mark directory as)
-//		Object[] equality = GoodConditionedTest.data().iterator().next();
-//		double[][] A = (double[][])equality[0];
-//		double[] b = (double[])equality[1];
+//		Equation equation = new Equation(new double[][]{{2., 1.}, {1., 2.}}, new double[]{5., 4.});
+
+        Equation equation = EquationFactory.GoodConditioned.apply(10);
 
 
 //		<--  Examples of printing to table  -->
 //		Check Results.xlsx after launch
 
-//		SolutionHandlers.showConvergence(A, b, 1e-5, -1, SolutionHandlers.TemplateFormat.ConvergenceSingleVeryLong);
-//		shows convergence for first solution of SolutionHandlers.constructAllSolutions(), up to 1000 iterations
+//		SolutionHandlers.showConvergence(equation, 1e-5, -1, TemplateFormat.ConvergenceManyComparisonShort, SolutionHandlers::constructAllSolutions);
+//		shows convergence for all solutions (up to 10 actually) of SolutionHandlers.constructAllSolutions(), up to 50 iterations, uses
+//		    ConvergenceManyComparisonShort template .xlsx file
 
-//		SolutionHandlers.showConvergence(A, b, 1e-5, -1, SolutionHandlers.TemplateFormat.ConvergenceManyComparisonShort);
-//		shows convergence for all solutions (up to 10 actually) of SolutionHandlers.constructAllSolutions(), up to 50 iterations
+//		SolutionHandlers.showConvergence(equation, 1e-5, -1, TemplateFormat.ConvergenceSingleVeryLong,
+//				(Equation eq, Double eps) -> new ISolver[]{new Seidel(eq.A, eq.b, eps, 10000)});
+//		shows convergence for Seidel, do up to 1000 iterations, uses ConvergenceSingleVeryLong template .xlsx file
 
-		SolutionHandlers.showIterationsNum(20, 1e-5, true, 10);
-//		shows number of iterations, on input data of various sizes, for all solutions (meaning of parameters see in documentation to this method)
-	}
+        SolutionHandlers.showIterationsNum(EquationFactory.GoodConditioned, 100, 1e-5, true, 10, SolutionHandlers::constructAllSolutions);
+//		shows number of iterations, on input data of various sizes (no more than 100, sizes grow exponentially),
+// 			for all solutions in SolutionHandlers.constructAllSolutions, gets average between 10 launches
+    }
 
 }

@@ -16,19 +16,20 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class SolutionHandlers {
-    private static ISolver[] constructAllSolutions(double[][] A, double[] b, double eps, int maxIterationsNum) {
+    public static ISolver[] constructAllSolutions(Equation eq, double eps) {
         return new ISolver[]{
-                new DaiYuan(A, b),
-                new FletcherReeves(A, b),
-                new HestenesStiefel(A, b),
-                new PolakRibiere(A, b),
-                new GaussSolver(A, b),
-                new Jacobi(A, b, eps, maxIterationsNum),
-                new Seidel(A, b, eps, maxIterationsNum),
-                new SeidelRelaxation(A, b, eps, maxIterationsNum, 0.01),
+                new DaiYuan(eq.A, eq.b),
+                new FletcherReeves(eq.A, eq.b),
+                new HestenesStiefel(eq.A, eq.b),
+                new PolakRibiere(eq.A, eq.b),
+                new GaussSolver(eq.A, eq.b),
+                new Jacobi(eq.A, eq.b, eps, 10000),
+                new Seidel(eq.A, eq.b, eps, 10000),
+                new SeidelRelaxation(eq.A, eq.b, eps, 10000, 0.1),
         };
     }
 
@@ -38,17 +39,19 @@ public class SolutionHandlers {
      *
      * @param componentNum number of printed component of solution vector.
      *                     If set to -1, norm is printed instead.
+     * @param format       chooses template file. This influences on how much solutions / versions of x will be written
      */
-    public static void showConvergence(double[][] A, double[] b, double eps, int componentNum, TemplateFormat format) throws IOException {
-        if (componentNum < -1 || componentNum > b.length) throw new RuntimeException("Wrong component requested");
+    public static void showConvergence(Equation equation, double eps, int componentNum, TemplateFormat format, BiFunction<Equation, Double, ISolver[]> solversConstructor) throws IOException {
+        if (componentNum < -1 || componentNum > equation.b.length)
+            throw new RuntimeException("Wrong component requested");
 
 //        some useful variables
         File inFile = new File(format.filePath);      // contains diagram, using it as basement
         File outFile = new File("Results.xlsx");
 
-        ISolver[] solvers = constructAllSolutions(A, b, eps, format.displayedRowsNum);   // initialize solvers
+        ISolver[] solvers = solversConstructor.apply(equation, eps);   // initialize solvers
         int solversNum = Math.min(solvers.length, format.displayedSolversNum);           // number of solvers to display
-        double[] etalon_x = new JamaSolver(A, b).solve();                                // exact solution
+        double[] etalon_x = new JamaSolver(equation.A, equation.b).solve();                                // exact solution
 
         Function<Matrix, Double> getComponent = componentNum == -1 ?                     // returns specified component of x / norm of x when componentNum == -1
                 Matrix::normInf :                                                          // delegates to Matrix::norm   (componentNum == -1)
@@ -107,21 +110,21 @@ public class SolutionHandlers {
      * Prints to Results.xlsx number of iterations required to complete solution for input parameters of varied sizes.
      * Solutions are gained from {@code constructAllSolutions} method.
      *
+     * @param equationProducer       function int -> Equation which creates equalities
      * @param inputMaxSize   max size of input data
-     * @param eps            required precision for solution
+     * @param eps            maximal precision which will be shown on diagram
      * @param inputExpGrowth determines whether input data size should grow exponentially or linearly.
      *                       First case may be useful for comparing solutions, whereas second one provides graphic dependence of iteration number on input size
      * @param launchesNum    number of launching a single solution on single input data size, provides smoothing
      * @throws IOException
      */
-    // TODO: how to give my own equality / set of them to this method? (don't forget about need for convenience way of using this method without laborious construction of matrices outside)
-    public static void showIterationsNum(int inputMaxSize, double eps, boolean inputExpGrowth, int launchesNum) throws IOException {
+    public static void showIterationsNum(EquationFactory equationProducer, int inputMaxSize, double eps, boolean inputExpGrowth, int launchesNum, BiFunction<Equation, Double, ISolver[]> solversConstructor) throws IOException {
 //        some usefull variables
         TemplateFormat format = TemplateFormat.CountIterations;
         File inFile = new File(format.filePath);      // contains diagram, using it as basement
         File outFile = new File("Results.xlsx");
 
-        ISolver[] uselessSolvers = constructAllSolutions(Matrix.random(1, 1).getArray(), Matrix.random(1, 1).getRowPackedCopy(), eps, format.displayedRowsNum);
+        ISolver[] uselessSolvers = solversConstructor.apply(equationProducer.apply(1), eps);
         int solversNum = Math.min(uselessSolvers.length, format.displayedSolversNum);           // number of solvers to display
 
 //        lets write some data to file
@@ -142,18 +145,19 @@ public class SolutionHandlers {
 //            insert values (into file copy which is stored into memory)
         for (int i = 0; i < format.displayedRowsNum; i++) {
             int n = inputExpGrowth ?
-                    (int) Math.pow(10, (double) i / format.displayedRowsNum * Math.log10(inputMaxSize)) :
-                    (int) ((double) i / format.displayedRowsNum * inputMaxSize) + 1;
+                    (int) Math.pow(10, (double) i / (format.displayedRowsNum - 1) * Math.log10(inputMaxSize)) :
+                    (int) ((double) i / (format.displayedRowsNum - 1) * (inputMaxSize - 1)) + 1;
 
 //            launch solution on various inputs
             int[] result = new int[uselessSolvers.length];
             for (int j = 0; j < launchesNum; j++) {
                 int solverNum = 0;
-                for (ISolver solver : constructAllSolutions(Matrix.random(n, n).getArray(), Matrix.random(n, 1).getColumnPackedCopy(), eps, 10000)) {
+                for (ISolver solver : solversConstructor.apply(equationProducer.apply(n), eps)) {
+                    int k = 0;
                     for (double[] x : solver) {
-                        result[solverNum]++;
+                        if (k++ > 10000) break;
                     }
-                    solverNum++;
+                    result[solverNum++] += k;
                 }
             }
 
@@ -161,7 +165,7 @@ public class SolutionHandlers {
             Row row = sheet.createRow(i + 1);
             row.createCell(0).setCellValue(n);
             for (int j = 0; j < result.length; j++) {
-                row.createCell(j + 1).setCellValue((double)result[j] / launchesNum);
+                row.createCell(j + 1).setCellValue((double) result[j]);
             }
         }
 
@@ -203,27 +207,4 @@ public class SolutionHandlers {
     }
       */
 
-    /**
-     * Keeps data about available template .xlsx files.
-     */
-    public enum TemplateFormat {
-        ConvergenceManyComparisonShort("convergence/Cmp many, short", 10, 50),               // many solvers,  few x versions
-        ConvergenceManyComparisonLong("convergence/Cmp many, long", 10, 1000),               // many solvers,  many x versions
-        ConvergenceTwoComparison("convergence/Cmp two", 2, 1000),                            // two solvers,   many x versions
-        ConvergenceSingle("convergence/Single", 1, 1000),                                    // single solver, many x versions
-        ConvergenceSingleVeryLong("convergence/Single very large", 1, 10000),                // single solver, huge amount of x versions
-
-        CountIterations("Count iterations", 10, 10);
-
-
-        public final String filePath;
-        public final int displayedSolversNum;
-        public final int displayedRowsNum;
-
-        TemplateFormat(String fileName, int displayedSolversNum, int displayedRowsNum) {
-            this.filePath = "table templates/" + fileName + ".xlsx";
-            this.displayedSolversNum = displayedSolversNum;
-            this.displayedRowsNum = displayedRowsNum;
-        }
-    }
 }
