@@ -114,7 +114,7 @@ public class SolutionHandlers {
      * @param launchesNum    number of launching a single solution on single input data size, provides smoothing
      * @throws IOException
      */
-    //TODO: how to give my own equality / set of them to this method? (don't forget about need for convenience way of using this method without laborious construction of matrices outside)
+    // TODO: how to give my own equality / set of them to this method? (don't forget about need for convenience way of using this method without laborious construction of matrices outside)
     public static void showIterationsNum(int inputMaxSize, double eps, boolean inputExpGrowth, int launchesNum) throws IOException {
 //        some usefull variables
         TemplateFormat format = TemplateFormat.CountIterations;
@@ -203,19 +203,17 @@ public class SolutionHandlers {
     }
       */
 
-    private static final int MAX_SOLUTIONS_NUMBER = 10;
-
     /**
      * Keeps data about available template .xlsx files.
      */
     public enum TemplateFormat {
-        ConvergenceManyComparisonShort("convergence/Cmp many, short", MAX_SOLUTIONS_NUMBER, 50),         // many solvers,  few x versions
-        ConvergenceManyComparisonLong("convergence/Cmp many, long", MAX_SOLUTIONS_NUMBER, 1000),         // many solvers,  many x versions
-        ConvergenceTwoComparison("convergence/Cmp two", 2, 1000),                                        // two solvers,   many x versions
-        ConvergenceSingle("convergence/Single", 1, 1000),                                                // single solver, many x versions
-        ConvergenceSingleVeryLong("convergence/Single very large", 1, 10000),                            // single solver, huge amount of x versions
+        ConvergenceManyComparisonShort("convergence/Cmp many, short", 10, 50),               // many solvers,  few x versions
+        ConvergenceManyComparisonLong("convergence/Cmp many, long", 10, 1000),               // many solvers,  many x versions
+        ConvergenceTwoComparison("convergence/Cmp two", 2, 1000),                            // two solvers,   many x versions
+        ConvergenceSingle("convergence/Single", 1, 1000),                                    // single solver, many x versions
+        ConvergenceSingleVeryLong("convergence/Single very large", 1, 10000),                // single solver, huge amount of x versions
 
-        CountIterations("Count iterations", MAX_SOLUTIONS_NUMBER, 10);
+        CountIterations("Count iterations", 10, 10);
 
 
         public final String filePath;
