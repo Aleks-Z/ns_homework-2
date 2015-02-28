@@ -13,7 +13,6 @@ import java.util.function.Function;
 public abstract class ISolverTest extends Assert {
 
     private static final double precision = 0.001;
-    private static final int maxIterationsNum = 1000;
 
     private double[][] A;
     private double[] b;
@@ -29,9 +28,7 @@ public abstract class ISolverTest extends Assert {
      * @param s - message
      */
     private static void printErrorMessage(String s) {
-        System.err.println(s);
-        System.err.println();
-        assertTrue(false);
+        throw new AssertionError(s);
     }
 
     /**
@@ -57,7 +54,7 @@ public abstract class ISolverTest extends Assert {
         double[] x_etalon = new JamaSolver(A, b).solve();
         if (!(new Matrix(x_etalon, x_etalon.length).minus(new Matrix(x, x.length)).normInf() < precision)) {
             if (b.length < 20)
-                printErrorMessage("Wrong answer \nFor test:\nA:\n" + matrixToString(A) + "\nb:\n" + Arrays.toString(b) + "\nExpected: " + Arrays.toString(x_etalon) + "\nGained: " + Arrays.toString(x));
+                printErrorMessage("Wrong answer \nFor test\n<-- A -->\n" + matrixToString(A) + "\n<-- b -->\n" + Arrays.toString(b) + "\n<- Result ->\nExpected:  " + Arrays.toString(x_etalon) + "\nGained:    " + Arrays.toString(x));
             else
                 printErrorMessage("Wrong answer \nOn matrix of size " + b.length + " \nAnswer difference: " + new Matrix(x_etalon, x_etalon.length).minus(new Matrix(x, x.length)).normInf() + "\n");
         }
@@ -82,4 +79,5 @@ public abstract class ISolverTest extends Assert {
     }
 
     protected static final Function<Equation, Object[]> asObject = (Equation eq) -> new Object[]{eq.A, eq.b};
+
 }
