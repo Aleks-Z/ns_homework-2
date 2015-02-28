@@ -1,6 +1,7 @@
 package com.company.testCases;
 
 import com.company.ISolverTest;
+import com.company.lang.Equation;
 import com.company.lang.EquationFactory;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -12,11 +13,12 @@ import java.util.function.Function;
 
 @RunWith(Parameterized.class)
 public class RandomTest extends ISolverTest {
-    public RandomTest(double[][] A, double[] b) {
-        super(A, b);
-    }
 
-    private static final Function<Integer, Object[]> producer = asObject.compose(EquationFactory.Random);
+    private static final Function<Integer, Object[]> producer = asObjectArray.compose(EquationFactory.Random);
+
+    public RandomTest(Equation equation) {
+        super(equation);
+    }
 
     @Parameterized.Parameters
     public static Collection<Object[]> data() {

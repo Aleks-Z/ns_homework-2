@@ -14,12 +14,10 @@ public abstract class ISolverTest extends Assert {
 
     private static final double precision = 0.001;
 
-    private double[][] A;
-    private double[] b;
+    private Equation equation;
 
-    public ISolverTest(double[][] A, double[] b) {
-        this.A = A;
-        this.b = b;
+    public ISolverTest(Equation equation) {
+        this.equation = equation;
     }
 
     /**
@@ -34,8 +32,8 @@ public abstract class ISolverTest extends Assert {
     /**
      * Gets solution for equality provided with {@code ISolverTestedClass.testedClass} class
      */
-    private static double[] solve(double[][] A, double[] b) {
-        ISolver testedSolver = ISolverTestedClass.createTestedSolver(A, b, precision);
+    private static double[] solve(Equation equation) {
+        ISolver testedSolver = ISolverTestedClass.createTestedSolver(equation, precision);
         try {
             return testedSolver.solve();
         } catch (ISolver.SolverException e) {
@@ -50,13 +48,13 @@ public abstract class ISolverTest extends Assert {
      */
     @Test
     public void check() {
-        double[] x = solve(new Matrix(A).getArray(), new Matrix(b, b.length).getColumnPackedCopy());
-        double[] x_etalon = new JamaSolver(A, b).solve();
+        double[] x = solve(equation);
+        double[] x_etalon = new JamaSolver(equation.A, equation.b).solve();
         if (!(new Matrix(x_etalon, x_etalon.length).minus(new Matrix(x, x.length)).normInf() < precision)) {
-            if (b.length < 20)
-                printErrorMessage("Wrong answer \nFor test\n<-- A -->\n" + matrixToString(A) + "\n<-- b -->\n" + Arrays.toString(b) + "\n<- Result ->\nExpected:  " + Arrays.toString(x_etalon) + "\nGained:    " + Arrays.toString(x));
+            if (equation.b.length < 20)
+                printErrorMessage("Wrong answer \nFor test\n<-- A -->\n" + matrixToString(equation.A) + "\n<-- b -->\n" + Arrays.toString(equation.b) + "\n<- Result ->\nExpected:  " + Arrays.toString(x_etalon) + "\nGained:    " + Arrays.toString(x));
             else
-                printErrorMessage("Wrong answer \nOn matrix of size " + b.length + " \nAnswer difference: " + new Matrix(x_etalon, x_etalon.length).minus(new Matrix(x, x.length)).normInf() + "\n");
+                printErrorMessage("Wrong answer \nOn matrix of size " + equation.b.length + " \nAnswer difference: " + new Matrix(x_etalon, x_etalon.length).minus(new Matrix(x, x.length)).normInf() + "\n");
         }
 
     }
@@ -78,6 +76,6 @@ public abstract class ISolverTest extends Assert {
         return s.toString();
     }
 
-    protected static final Function<Equation, Object[]> asObject = (Equation eq) -> new Object[]{eq.A, eq.b};
+    protected static final Function<Equation, Object[]> asObjectArray = (Equation eq) -> new Object[]{eq};
 
 }

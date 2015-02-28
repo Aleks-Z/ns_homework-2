@@ -1,6 +1,7 @@
 package com.company.testCases;
 
 import com.company.ISolverTest;
+import com.company.lang.Equation;
 import com.company.lang.EquationFactory;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -11,11 +12,12 @@ import java.util.function.Function;
 
 @RunWith(Parameterized.class)
 public class GoodConditionedTest extends ISolverTest {
-    public GoodConditionedTest(double[][] A, double[] b) {
-        super(A, b);
-    }
 
-    private static final Function<Integer, Object[]> producer = asObject.compose(EquationFactory.GoodConditioned);
+    private static final Function<Integer, Object[]> producer = asObjectArray.compose(EquationFactory.GoodConditioned);
+
+    public GoodConditionedTest(Equation equation) {
+        super(equation);
+    }
 
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
