@@ -27,9 +27,11 @@ public class SolutionHandlers {
                 new HestenesStiefel(eq.A, eq.b),
                 new PolakRibiere(eq.A, eq.b),
                 new GaussSolver(eq.A, eq.b),
-                new Jacobi(eq.A, eq.b, eps, 10000),
-                new Seidel(eq.A, eq.b, eps, 10000),
-                new SeidelRelaxation(eq.A, eq.b, eps, 10000, 0.1),
+//                do not set iterationsNum to any occurred number here. In methods of this class, if solution reaches 10000 iterations,
+//                  it would be considered hanged and measuring wouldn't be put to table - save this working.
+                new Jacobi(eq.A, eq.b, eps, Integer.MAX_VALUE),
+                new Seidel(eq.A, eq.b, eps, Integer.MAX_VALUE),
+                new SeidelRelaxation(eq.A, eq.b, eps, Integer.MAX_VALUE, 0.1),
         };
     }
 
@@ -110,12 +112,12 @@ public class SolutionHandlers {
      * Prints to Results.xlsx number of iterations required to complete solution for input parameters of varied sizes.
      * Solutions are gained from {@code constructAllSolutions} method.
      *
-     * @param equationProducer       function int -> Equation which creates equalities
-     * @param inputMaxSize   max size of input data
-     * @param eps            maximal precision which will be shown on diagram
-     * @param inputExpGrowth determines whether input data size should grow exponentially or linearly.
-     *                       First case may be useful for comparing solutions, whereas second one provides graphic dependence of iteration number on input size
-     * @param launchesNum    number of launching a single solution on single input data size, provides smoothing
+     * @param equationProducer function int -> Equation which creates equalities
+     * @param inputMaxSize     max size of input data
+     * @param eps              maximal precision which will be shown on diagram
+     * @param inputExpGrowth   determines whether input data size should grow exponentially or linearly.
+     *                         First case may be useful for comparing solutions, whereas second one provides graphic dependence of iteration number on input size
+     * @param launchesNum      number of launching a single solution on single input data size, provides smoothing
      * @throws IOException
      */
     public static void showIterationsNum(EquationFactory equationProducer, int inputMaxSize, double eps, boolean inputExpGrowth, int launchesNum, BiFunction<Equation, Double, ISolver[]> solversConstructor) throws IOException {
@@ -155,7 +157,10 @@ public class SolutionHandlers {
                 for (ISolver solver : solversConstructor.apply(equationProducer.apply(n), eps)) {
                     int k = 0;
                     for (double[] x : solver) {
-                        if (k++ > 10000) break;
+                        if (k++ > 10000) {
+                            result[solverNum] = Integer.MIN_VALUE;
+                            break;
+                        }
                     }
                     result[solverNum++] += k;
                 }
@@ -165,7 +170,11 @@ public class SolutionHandlers {
             Row row = sheet.createRow(i + 1);
             row.createCell(0).setCellValue(n);
             for (int j = 0; j < result.length; j++) {
-                row.createCell(j + 1).setCellValue((double) result[j]);
+                if (result[j] >= 0)
+                    row.createCell(j + 1).setCellValue((double) result[j] / launchesNum);
+                else {
+                    int a = 5;
+                }
             }
         }
 
