@@ -54,7 +54,10 @@ public abstract class ISolverTest extends Assert {
         double[] x = solve(new Matrix(A).getArray(), new Matrix(b, b.length).getColumnPackedCopy());
         double[] x_etalon = new JamaSolver(A, b).solve();
         if (!(new Matrix(x_etalon, x_etalon.length).minus(new Matrix(x, x.length)).normInf() < precision)) {
-            printErrorMessage("Wrong answer \nFor test:\nA:\n" + matrixToString(A) + "\nb:\n" + Arrays.toString(b) + "\nExpected: " + Arrays.toString(x_etalon) + "\nGained: " + Arrays.toString(x));
+            if (b.length < 20)
+                printErrorMessage("Wrong answer \nFor test:\nA:\n" + matrixToString(A) + "\nb:\n" + Arrays.toString(b) + "\nExpected: " + Arrays.toString(x_etalon) + "\nGained: " + Arrays.toString(x));
+            else
+                printErrorMessage("Wrong answer \nOn matrix of size " + b.length + " \nAnswer difference: " + new Matrix(x_etalon, x_etalon.length).minus(new Matrix(x, x.length)).normInf() + "\n");
         }
 
     }
