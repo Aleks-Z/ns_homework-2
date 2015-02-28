@@ -3,7 +3,7 @@ package com.company.lang;
 import Jama.Matrix;
 
 /**
- * Single-iteration solutions
+ * ConvergenceSingle-iteration solutions
  */
 public abstract class ISolverNonIterative extends ISolver {
 

@@ -19,9 +19,9 @@ public class RandomTest extends ISolverTest {
     public static Collection<Object[]> data() {
         Random r = new Random();
         ArrayList<Object[]> params = new ArrayList<>();
-        for (int t = 0; t < 10; t++) {
-            int n = r.nextInt(100) + 1;
-            params.add(new Object[]{Matrix.random(n, n).getArray(), Matrix.random(1, n).getArray()[0]});
+        for (int t = 0; t < 200; t++) {
+            int n = r.nextInt(1000) + 1;
+            params.add(new Object[]{Matrix.random(n, n).times(0.001).getArray(), Matrix.random(1, n).getArray()[0]});
         }
         return params;
     }
