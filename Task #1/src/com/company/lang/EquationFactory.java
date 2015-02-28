@@ -21,8 +21,8 @@ public interface EquationFactory extends Function<Integer, Equation> {
 
     public static final EquationFactory Hilbert = (Integer n) -> {
         double[][] A = new double[n][n];
-        for (int i = 0; i < A.length; i++) {
-            for (int j = 0; j < A[i].length; j++) {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
                 A[i][j] = 1. / (i + j + 1);
             }
         }
