@@ -110,14 +110,15 @@ public class SolutionHandlers {
 
     /**
      * Prints to Results.xlsx number of iterations required to complete solution for input parameters of varied sizes.
-     * Solutions are gained from {@code constructAllSolutions} method.
+     * When solution fails on some equation size or works for too much, data is not registered into table.
      *
-     * @param equationProducer function int -> Equation which creates equalities
-     * @param inputMaxSize     max size of input data
-     * @param eps              maximal precision which will be shown on diagram
-     * @param inputExpGrowth   determines whether input data size should grow exponentially or linearly.
-     *                         First case may be useful for comparing solutions, whereas second one provides graphic dependence of iteration number on input size
-     * @param launchesNum      number of launching a single solution on single input data size, provides smoothing
+     * @param equationProducer   function-creator with signature EquationSize -> Equation
+     * @param inputMaxSize       max size of input data
+     * @param eps                maximal precision which will be shown on diagram
+     * @param inputExpGrowth     determines whether input data size should grow exponentially or linearly.
+     *                           First case may be useful for comparing solutions, whereas second one provides graphic dependence of iteration number on input size
+     * @param launchesNum        number of launching a single solution on single input data size, provides smoothing
+     * @param solversConstructor function-creator with signature Equation -> Eps -> ISolver[]
      * @throws IOException
      */
     public static void showIterationsNum(EquationFactory equationProducer, int inputMaxSize, double eps, boolean inputExpGrowth, int launchesNum, BiFunction<Equation, Double, ISolver[]> solversConstructor) throws IOException {
@@ -137,9 +138,9 @@ public class SolutionHandlers {
         }
         Sheet sheet = workbook.getSheetAt(0);
 
-//            fill table header with solvers' names
+//        fill table header with solvers' names
         Row firstRow = sheet.createRow(0);
-        firstRow.createCell(0).setCellValue("x");
+        firstRow.createCell(0).setCellValue("n \\ solver");
         for (int i = 0; i < solversNum; i++) {
             firstRow.createCell(i + 1).setCellValue(uselessSolvers[i].getClass().getSimpleName());
         }
@@ -155,14 +156,22 @@ public class SolutionHandlers {
             for (int j = 0; j < launchesNum; j++) {
                 int solverNum = 0;
                 for (ISolver solver : solversConstructor.apply(equationProducer.apply(n), eps)) {
-                    int k = 0;
-                    for (double[] x : solver) {
-                        if (k++ > 10000) {
-                            result[solverNum] = Integer.MIN_VALUE;
-                            break;
+//                    skip if has failed at previous launch
+                    if (result[solverNum] < 0) continue;
+
+//                    count iterations, if too many or exception thrown then result = MIN_VALUE
+                    try {
+                        int k = 0;
+                        for (double[] x : solver) {
+                            if (k++ > 10000) {
+                                result[solverNum] = Integer.MIN_VALUE;
+                                break;
+                            }
                         }
+                        result[solverNum++] += k;
+                    } catch (Exception e) {
+                        result[solverNum] = Integer.MIN_VALUE;
                     }
-                    result[solverNum++] += k;
                 }
             }
 
@@ -172,9 +181,6 @@ public class SolutionHandlers {
             for (int j = 0; j < result.length; j++) {
                 if (result[j] >= 0)
                     row.createCell(j + 1).setCellValue((double) result[j] / launchesNum);
-                else {
-                    int a = 5;
-                }
             }
         }
 

@@ -5,7 +5,7 @@ import Jama.Matrix;
 import java.util.function.Function;
 
 /**
- * Describes functions which create equation of specified size
+ * Describes functions which create equations of specified size
  */
 public interface EquationFactory extends Function<Integer, Equation> {
     public static final EquationFactory Random = (Integer n) -> new Equation(Matrix.random(n, n), Matrix.random(n, 1));
