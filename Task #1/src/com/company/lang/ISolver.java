@@ -31,10 +31,24 @@ public abstract class ISolver implements Iterable<double[]> {
 		return ans;
 	}
 
+	/**
+	 * @return name of solution approach
+	 */
+	public String getName(){
+		return this.getClass().getSimpleName();
+	}
+
+
+	private boolean hasLaunched = false;
 
 	@Override
-	public Iterator<double[]> iterator() {
-		return new ISolverIterator();
+	public final Iterator<double[]> iterator() {
+		if (!hasLaunched) {
+			hasLaunched = true;
+			return new ISolverIterator();
+		} else {
+			throw new IllegalStateException("ISolver iterator can not be requested again");
+		}
 	}
 
 

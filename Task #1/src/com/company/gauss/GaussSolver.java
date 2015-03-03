@@ -55,4 +55,9 @@ public class GaussSolver extends ISolverNonIterative {
 			A.set(i2, i, tmp);
 		}
 	}
+
+	@Override
+	public String getName() {
+		return "Gauss";
+	}
 }
