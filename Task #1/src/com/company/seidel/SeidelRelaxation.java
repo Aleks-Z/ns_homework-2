@@ -77,4 +77,9 @@ public class SeidelRelaxation extends ISolverIterative{
         return counter >= maxIterationsNum || deltaX.normInf() < posterioriEps;
 
     }
+
+    @Override
+    public String getName() {
+        return String.format("%s (ω = %.2f)", super.getName(), relaxation);
+    }
 }

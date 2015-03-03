@@ -22,6 +22,7 @@ import java.util.function.Function;
 public class SolutionHandlers {
     public static ISolver[] constructAllSolutions(Equation eq, double eps) {
         return new ISolver[]{
+                new SeidelRelaxation(eq.A, eq.b, eps, Integer.MAX_VALUE, 0.3),
                 new DaiYuan(eq.A, eq.b),
                 new FletcherReeves(eq.A, eq.b),
                 new HestenesStiefel(eq.A, eq.b),
@@ -31,7 +32,7 @@ public class SolutionHandlers {
 //                  it would be considered hanged and measuring wouldn't be put to table - save this working.
                 new Jacobi(eq.A, eq.b, eps, Integer.MAX_VALUE),
                 new Seidel(eq.A, eq.b, eps, Integer.MAX_VALUE),
-                new SeidelRelaxation(eq.A, eq.b, eps, Integer.MAX_VALUE, 0.1),
+                new SeidelRelaxation(eq.A, eq.b, eps, Integer.MAX_VALUE, 1.8),
         };
     }
 
@@ -71,7 +72,7 @@ public class SolutionHandlers {
         Row firstRow = sheet.createRow(0);
         firstRow.createCell(0).setCellValue("x");
         for (int i = 0; i < solversNum; i++) {
-            firstRow.createCell(i + 1).setCellValue(solvers[i].getClass().getSimpleName());
+            firstRow.createCell(i + 1).setCellValue(solvers[i].getName());
         }
 
 //            insert values (into file copy which is stored into memory)
@@ -85,7 +86,10 @@ public class SolutionHandlers {
                     if (sheet.getLastRowNum() < rowNum) {
                         row = sheet.createRow(rowNum++);
                         row.createCell(0).setCellValue(rowNum - 1);
-                    } else row = sheet.getRow(rowNum++);
+                    } else {
+                        row = sheet.getRow(rowNum++);
+                    }
+
 
                     // fill cell
                     row.createCell(i + 1).setCellValue(Math.log10(Math.max(
@@ -97,7 +101,7 @@ public class SolutionHandlers {
                     if (rowNum > format.displayedRowsNum) break;
                 }
             } catch (ISolver.SolverException ex) {
-                System.out.println(solvers[i].getClass().getSimpleName() + " failed");
+                System.out.println(solvers[i].getName() + " failed");
             }
         }
 
@@ -142,7 +146,7 @@ public class SolutionHandlers {
         Row firstRow = sheet.createRow(0);
         firstRow.createCell(0).setCellValue("n \\ solver");
         for (int i = 0; i < solversNum; i++) {
-            firstRow.createCell(i + 1).setCellValue(uselessSolvers[i].getClass().getSimpleName());
+            firstRow.createCell(i + 1).setCellValue(uselessSolvers[i].getName());
         }
 
 //            insert values (into file copy which is stored into memory)
@@ -203,7 +207,7 @@ public class SolutionHandlers {
         try (FileOutputStream out = new FileOutputStream(FILE_SOLVERS_NAME)) {
             Workbook workbook = new HSSFWorkbook();
             for (ISolver solver : solvers)
-                workbook.createSheet(solver.getClass().getSimpleName());
+                workbook.createSheet(solver.getName());
             for (int i = 0, size = solvers.length; i < size; i++) {
                 Sheet sheet = workbook.getSheetAt(i);
                 ISolver solver = solvers[i];

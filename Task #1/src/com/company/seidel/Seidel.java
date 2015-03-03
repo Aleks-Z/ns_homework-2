@@ -6,6 +6,11 @@ public class Seidel extends SeidelRelaxation {
     public Seidel(double[][] A, double[] b, double eps, int maxIterationsNum) {
         super(A, b, eps, maxIterationsNum, 1);
     }
+
+    @Override
+    public String getName() {
+        return this.getClass().getSimpleName();
+    }
 }
 
 

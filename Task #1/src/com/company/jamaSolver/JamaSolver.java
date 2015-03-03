@@ -13,4 +13,9 @@ public class JamaSolver extends ISolverNonIterative {
         return A.solve(b);
     }
 
+    @Override
+    public String getName() {
+        return "Etalon";
+    }
+
 }

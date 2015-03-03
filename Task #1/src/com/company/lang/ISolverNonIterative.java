@@ -19,13 +19,13 @@ public abstract class ISolverNonIterative extends ISolver {
     protected abstract Matrix count();
 
     @Override
-    protected Matrix countNext() {
+    protected final Matrix countNext() {
         counted = true;
         return count();
     }
 
     @Override
-    protected boolean isPreciousEnough(Matrix m) {
+    protected final boolean isPreciousEnough(Matrix m) {
         return counted;
     }
 }
