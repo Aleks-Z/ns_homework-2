@@ -20,9 +20,17 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class SolutionHandlers {
+
+    /**
+     * File with result tables.
+     */
+    public static final File outFile = new File("Results.xlsx");
+
+    /**
+     * Creates some set of solvers. May be used as parameter in methods below.
+     */
     public static ISolver[] constructAllSolutions(Equation eq, double eps) {
         return new ISolver[]{
-                new SeidelRelaxation(eq.A, eq.b, eps, Integer.MAX_VALUE, 0.3),
                 new DaiYuan(eq.A, eq.b),
                 new FletcherReeves(eq.A, eq.b),
                 new HestenesStiefel(eq.A, eq.b),
@@ -32,6 +40,7 @@ public class SolutionHandlers {
 //                  it would be considered hanged and measuring wouldn't be put to table - save this working.
                 new Jacobi(eq.A, eq.b, eps, Integer.MAX_VALUE),
                 new Seidel(eq.A, eq.b, eps, Integer.MAX_VALUE),
+                new SeidelRelaxation(eq.A, eq.b, eps, Integer.MAX_VALUE, 0.3),
                 new SeidelRelaxation(eq.A, eq.b, eps, Integer.MAX_VALUE, 1.8),
         };
     }
@@ -40,9 +49,10 @@ public class SolutionHandlers {
      * Prints to Result.xlsx solution of few of first solvers listed in {@code constructAllSolutions} and displays diagram which shows convergence speed.
      * In case of correct solution, solver's sequence of x will end with log10(eps) (check this on diagram).
      *
-     * @param componentNum number of printed component of solution vector.
-     *                     If set to -1, norm is printed instead.
-     * @param format       chooses template file. This influences on how much solutions / versions of x will be written
+     * @param componentNum       number of printed component of solution vector.
+     *                           If set to -1, norm is printed instead.
+     * @param format             chooses template file. This influences on how much solutions / versions of x will be written
+     * @param solversConstructor function-creator with signature Equation -> Eps -> ISolver[]
      */
     public static void showConvergence(Equation equation, double eps, int componentNum, TemplateFormat format, BiFunction<Equation, Double, ISolver[]> solversConstructor) throws IOException {
         if (componentNum < -1 || componentNum > equation.b.length)
@@ -50,7 +60,6 @@ public class SolutionHandlers {
 
 //        some useful variables
         File inFile = new File(format.filePath);      // contains diagram, using it as basement
-        File outFile = new File("Results.xlsx");
 
         ISolver[] solvers = solversConstructor.apply(equation, eps);   // initialize solvers
         int solversNum = Math.min(solvers.length, format.displayedSolversNum);           // number of solvers to display
@@ -129,7 +138,6 @@ public class SolutionHandlers {
 //        some usefull variables
         TemplateFormat format = TemplateFormat.CountIterations;
         File inFile = new File(format.filePath);      // contains diagram, using it as basement
-        File outFile = new File("Results.xlsx");
 
         ISolver[] uselessSolvers = solversConstructor.apply(equationProducer.apply(1), eps);
         int solversNum = Math.min(uselessSolvers.length, format.displayedSolversNum);           // number of solvers to display
