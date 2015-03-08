@@ -1,27 +1,31 @@
 package com.company.testCases;
 
-import Jama.Matrix;
 import com.company.ISolverTest;
+import com.company.lang.Equation;
+import com.company.lang.EquationFactory;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
+import java.util.function.Function;
 
 @RunWith(Parameterized.class)
 public class RandomTest extends ISolverTest {
-    public RandomTest(double[][] A, double[] b) {
-        super(A, b);
+
+    private static final Function<Integer, Object[]> producer = asObjectArray.compose(EquationFactory.Random);
+
+    public RandomTest(Equation equation) {
+        super(equation);
     }
 
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
         Random r = new Random();
         ArrayList<Object[]> params = new ArrayList<>();
-        for (int t = 0; t < 10; t++) {
-            int n = r.nextInt(100) + 1;
-            params.add(new Object[]{Matrix.random(n, n).getArray(), Matrix.random(1, n).getArray()[0]});
+        for (int t = 0; t < 200; t++) {
+            params.add(producer.apply(r.nextInt(100) + 1));
         }
         return params;
     }

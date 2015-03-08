@@ -2,24 +2,22 @@ package com.company;
 
 import Jama.Matrix;
 import com.company.jamaSolver.JamaSolver;
+import com.company.lang.Equation;
 import com.company.lang.ISolver;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import java.util.function.Function;
 
 public abstract class ISolverTest extends Assert {
 
     private static final double precision = 0.001;
-    private static final int maxIterationsNum = 1000;
 
-    private double[][] A;
-    private double[] b;
+    private Equation equation;
 
-    public ISolverTest(double[][] A, double[] b) {
-        this.A = A;
-        this.b = b;
+    public ISolverTest(Equation equation) {
+        this.equation = equation;
     }
 
     /**
@@ -28,39 +26,16 @@ public abstract class ISolverTest extends Assert {
      * @param s - message
      */
     private static void printErrorMessage(String s) {
-        System.err.println(s);
-        System.err.println();
-        assertTrue(false);
+        throw new AssertionError(s);
     }
 
     /**
      * Gets solution for equality provided with {@code ISolverTestedClass.testedClass} class
      */
-    private static double[] solve(double[][] A, double[] b) {
-        Class<? extends ISolver> testedClass = ISolverTestedClass.testedClass;
-        ISolver solver = null;
-
-        // constructor selection
+    private static double[] solve(Equation equation) {
+        ISolver testedSolver = ISolverTestedClass.createTestedSolver(equation, precision);
         try {
-            try {
-                // attempt to call <init>(A, b, eps, maxIterationsNum)
-                solver = testedClass.getConstructor(double[][].class, double[].class, double.class, int.class).newInstance(A, b, precision, maxIterationsNum);
-            } catch (NoSuchMethodException e) {
-                try {
-                    // attempt to call <init>(A, b)
-                    solver = testedClass.getConstructor(double[][].class, double[].class).newInstance(A, b);
-                } catch (NoSuchMethodException e1) {
-                    printErrorMessage("No appropriate constructor found in class " + testedClass.getName() + "; <init>(double[][], double[]) or <init>(double[][], double[], double, int) required");
-                }
-            }
-        } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        assert solver != null;
-
-        // launch solution
-        try {
-            return solver.solve();
+            return testedSolver.solve();
         } catch (ISolver.SolverException e) {
             printErrorMessage(e.getMessage());
         }
@@ -73,10 +48,13 @@ public abstract class ISolverTest extends Assert {
      */
     @Test
     public void check() {
-        double[] x = solve(A, b);
-        double[] x_etalon = new JamaSolver(A, b).solve();
+        double[] x = solve(equation);
+        double[] x_etalon = new JamaSolver(equation.A, equation.b).solve();
         if (!(new Matrix(x_etalon, x_etalon.length).minus(new Matrix(x, x.length)).normInf() < precision)) {
-            printErrorMessage("Wrong answer \nFor test:\nA:\n" + matrixToString(A) + "\nb:\n" + Arrays.toString(b) + "\nExpected: " + Arrays.toString(x_etalon) + "\nGained: " + Arrays.toString(x));
+            if (equation.b.length < 20)
+                printErrorMessage("Wrong answer \nFor test\n<-- A -->\n" + matrixToString(equation.A) + "\n<-- b -->\n" + Arrays.toString(equation.b) + "\n<- Result ->\nExpected:  " + Arrays.toString(x_etalon) + "\nGained:    " + Arrays.toString(x));
+            else
+                printErrorMessage("Wrong answer \nOn matrix of size " + equation.b.length + " \nAnswer difference: " + new Matrix(x_etalon, x_etalon.length).minus(new Matrix(x, x.length)).normInf() + "\n");
         }
 
     }
@@ -96,7 +74,8 @@ public abstract class ISolverTest extends Assert {
             if (i != a.length - 1) s.append("\n");
         }
         return s.toString();
-
     }
+
+    protected static final Function<Equation, Object[]> asObjectArray = (Equation eq) -> new Object[]{eq};
 
 }

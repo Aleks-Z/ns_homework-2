@@ -3,7 +3,7 @@ package com.company.lang;
 import Jama.Matrix;
 
 /**
- * Single-iteration solutions
+ * ConvergenceSingle-iteration solutions
  */
 public abstract class ISolverNonIterative extends ISolver {
 
@@ -19,13 +19,13 @@ public abstract class ISolverNonIterative extends ISolver {
     protected abstract Matrix count();
 
     @Override
-    protected Matrix countNext() {
+    protected final Matrix countNext() {
         counted = true;
         return count();
     }
 
     @Override
-    protected boolean isPreciousEnough(Matrix m) {
+    protected final boolean isPreciousEnough(Matrix m) {
         return counted;
     }
 }

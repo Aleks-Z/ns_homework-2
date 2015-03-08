@@ -1,30 +1,29 @@
 package com.company.testCases;
 
-import Jama.Matrix;
 import com.company.ISolverTest;
+import com.company.lang.Equation;
+import com.company.lang.EquationFactory;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.function.Function;
 
 @RunWith(Parameterized.class)
 public class HilbertTest extends ISolverTest {
-    public HilbertTest(double[][] A, double[] b) {
-        super(A, b);
+
+    private static final Function<Integer, Object[]> producer = asObjectArray.compose(EquationFactory.Hilbert);
+
+    public HilbertTest(Equation equation) {
+        super(equation);
     }
 
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
         ArrayList<Object[]> params = new ArrayList<>();
         for (int n = 1; n < 10; n++) {
-            double[][] A = new double[n][n];
-            for (int i = 0; i < n; i++) {
-                for (int j = 0; j < n; j++) {
-                    A[i][j] = 1. / (i + j + 1);
-                }
-            }
-            params.add(new Object[]{A, Matrix.random(1, n).getArray()[0]});
+            params.add(producer.apply(n));
         }
         return params;
     }
