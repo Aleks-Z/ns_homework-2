@@ -33,7 +33,7 @@ public class Main {
 //				(Equation eq, Double eps) -> new ISolver[]{new Seidel(eq.A, eq.b, eps, Integer.MAX_VALUE)});
 //		shows convergence for Seidel, do up to 1000 iterations, uses ConvergenceSingleVeryLong template .xlsx file
 
-//        SolutionHandlers.showIterationsNum(EquationFactory.Random, 30, 1e-5, true, 10, SolutionHandlers::constructAllSolutions);
+//        SolutionHandlers.showIterationsNum(EquationFactory.Random, 100, 1e-5, true, 10, SolutionHandlers::constructAllSolutions);
 //		shows number of iterations, on input data of various sizes (no more than 100, sizes grow exponentially),
 // 			for all solutions in SolutionHandlers.constructAllSolutions, gets average between 10 launches
     }
