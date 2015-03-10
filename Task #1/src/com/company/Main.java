@@ -4,12 +4,11 @@ import com.company.lang.Equation;
 import com.company.lang.EquationFactory;
 import com.company.lang.SolutionHandlers;
 import com.company.lang.TemplateFormat;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 import java.io.IOException;
 
 public class Main {
-    public static void main(String[] args) throws IOException, InvalidFormatException {
+    public static void main(String[] args) throws IOException {
 //		101 way to initialize equation, chapter 0
 
 //      int n = 10;

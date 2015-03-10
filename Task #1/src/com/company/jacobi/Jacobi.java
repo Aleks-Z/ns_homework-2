@@ -7,6 +7,8 @@ public class Jacobi extends ISolverIterative {
     private Matrix alpha;
     private Matrix beta;
     private int n;
+
+    double alphaNorm;
     private double posterioriEps;
 
     private Matrix x;
@@ -39,13 +41,17 @@ public class Jacobi extends ISolverIterative {
     }
 
     protected void initPosterioriEstimation() {
-        double alphaNorm = alpha.normF();
+        alphaNorm = alpha.normF();
         posterioriEps = (1.0 - alphaNorm) * eps / (alphaNorm);
     }
 
     private int counter = 0;
     @Override
     protected Matrix countNext() {
+        if (alphaNorm >= 1) {
+            throw new RuntimeException("Input matrix is ill-conditioned.");
+        }
+
         next = alpha.times(x).plus(beta);
         x = next;
         ++counter;
@@ -59,7 +65,7 @@ public class Jacobi extends ISolverIterative {
         }
 
         if (deltaX.normF() < posterioriEps) {
-            return true;
+//            return true;
         }
 
         return false;
