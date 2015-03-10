@@ -52,7 +52,8 @@ public abstract class ISolverTest extends Assert {
         double[] x_etalon = new JamaSolver(equation.A, equation.b).solve();
         if (!(new Matrix(x_etalon, x_etalon.length).minus(new Matrix(x, x.length)).normInf() < precision)) {
             if (equation.size() < 20)
-                printErrorMessage("Wrong answer \nFor test\n<-- A -->\n" + matrixToString(equation.A) + "\n<-- b -->\n" + Arrays.toString(equation.b) + "\n<- Result ->\nExpected:  " + Arrays.toString(x_etalon) + "\nGained:    " + Arrays.toString(x));
+                printErrorMessage("Wrong answer \nFor test\n<-- A -->\n" + matrixToString(equation.A) + "\n<-- b -->\n" + Arrays.toString(equation.b) + "\n<- Result ->\nExpected:  " + Arrays.toString(x_etalon) + "\nGained:    " + Arrays.toString(x) + "\n\n"
+                        + "<-- Check -->\n" + "Ax :  " + Arrays.toString(new Matrix(equation.A).times(new Matrix(x, x.length)).getColumnPackedCopy()) + "\nAx*:  " + Arrays.toString(new Matrix(equation.A).times(new Matrix(x_etalon, x_etalon.length)).getColumnPackedCopy()) + "\n" + "b  :  " + Arrays.toString(equation.b));
             else
                 printErrorMessage("Wrong answer \nOn matrix of size " + equation.size() + " \nAnswer difference: " + new Matrix(x_etalon, x_etalon.length).minus(new Matrix(x, x.length)).normInf() + "\n");
         }
