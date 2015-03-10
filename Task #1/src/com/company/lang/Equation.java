@@ -19,15 +19,11 @@ public class Equation {
         this.b = b.getColumnPackedCopy();
     }
 
-    public double[][] getA() {
-        return A;
-    }
-
-    public double[] getB() {
-        return b;
-    }
-
     public Equation copy(){
         return new Equation(new Matrix(A).copy().getArray(), new Matrix(b, b.length).copy().getColumnPackedCopy());
+    }
+
+    public int size() {
+        return b.length;
     }
 }

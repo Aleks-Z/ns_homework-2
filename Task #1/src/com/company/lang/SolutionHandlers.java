@@ -55,7 +55,7 @@ public class SolutionHandlers {
      * @param solversConstructor function-creator with signature Equation -> Eps -> ISolver[]
      */
     public static void showConvergence(Equation equation, double eps, int componentNum, TemplateFormat format, BiFunction<Equation, Double, ISolver[]> solversConstructor) throws IOException {
-        if (componentNum < -1 || componentNum > equation.b.length)
+        if (componentNum < -1 || componentNum > equation.size())
             throw new RuntimeException("Wrong component requested");
 
 //        some useful variables
@@ -99,7 +99,6 @@ public class SolutionHandlers {
                         row = sheet.getRow(rowNum++);
                     }
 
-
                     // fill cell
                     row.createCell(i + 1).setCellValue(Math.log10(Math.max(
                             getComponent.apply(new Matrix(x, x.length).minus(new Matrix(etalon_x, etalon_x.length))),
@@ -114,11 +113,8 @@ public class SolutionHandlers {
             }
         }
 
-        try (OutputStream out = new BufferedOutputStream(new FileOutputStream(outFile))) {
-//            write to result file
-            workbook.write(out);
-            out.close();
-        }
+//        write to result file
+        writeToResultFile(workbook);
     }
 
     /**
@@ -141,6 +137,7 @@ public class SolutionHandlers {
 
         ISolver[] uselessSolvers = solversConstructor.apply(equationProducer.apply(1), eps);
         int solversNum = Math.min(uselessSolvers.length, format.displayedSolversNum);           // number of solvers to display
+        int rowsNum = Math.min(inputMaxSize, format.displayedRowsNum);
 
 //        lets write some data to file
         Workbook workbook;
@@ -158,10 +155,10 @@ public class SolutionHandlers {
         }
 
 //            insert values (into file copy which is stored into memory)
-        for (int i = 0; i < format.displayedRowsNum; i++) {
+        for (int i = 0; i < rowsNum; i++) {
             int n = inputExpGrowth ?
-                    (int) Math.pow(10, (double) i / (format.displayedRowsNum - 1) * Math.log10(inputMaxSize)) :
-                    (int) ((double) i / (format.displayedRowsNum - 1) * (inputMaxSize - 1)) + 1;
+                    (int) Math.pow(10, (double) i / (rowsNum - 1) * Math.log10(inputMaxSize)) :
+                    (int) ((double) i / (rowsNum - 1) * (inputMaxSize - 1)) + 1;
 
 //            launch solution on various inputs
             int[] result = new int[uselessSolvers.length];
@@ -196,11 +193,26 @@ public class SolutionHandlers {
             }
         }
 
+//        write to result file
+        writeToResultFile(workbook);
+    }
 
-        try (OutputStream out = new BufferedOutputStream(new FileOutputStream(outFile))) {
-//            write to result file
-            workbook.write(out);
-            out.close();
+    /**
+     * Prints workbook to result file. If failed, prints warning to console and tries again after enter key pressed.
+     */
+    private static void writeToResultFile(Workbook workbook) throws IOException {
+        try {
+            try (OutputStream out = new BufferedOutputStream(new FileOutputStream(outFile))) {
+                workbook.write(out);
+            }
+        } catch (IOException e) {
+            System.err.println("Error while accessing file:");
+            System.err.println("\t" + e.getMessage());
+            System.err.println("Press enter to retry...");
+            System.in.read();
+            try (OutputStream out = new BufferedOutputStream(new FileOutputStream(outFile))) {
+                workbook.write(out);
+            }
         }
     }
 
