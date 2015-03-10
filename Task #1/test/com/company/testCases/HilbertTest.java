@@ -22,7 +22,7 @@ public class HilbertTest extends ISolverTest {
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
         ArrayList<Object[]> params = new ArrayList<>();
-        for (int n = 1; n < 10; n++) {
+        for (int n = 1; n < 2; n++) {
             params.add(producer.apply(n));
         }
         return params;

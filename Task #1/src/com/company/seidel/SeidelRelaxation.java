@@ -14,6 +14,9 @@ public class SeidelRelaxation extends ISolverIterative{
 
     private double relaxation;
 
+    double matrixFirstNorm;
+    double matrixSecondNorm;
+
     public SeidelRelaxation(double[][] A, double[] b, double eps, int maxIterationsNum, double relaxationParameter) {
         super(A, b, eps, maxIterationsNum);
         n = this.A.getRowDimension();
@@ -41,14 +44,18 @@ public class SeidelRelaxation extends ISolverIterative{
             }
         }
 
-        double matrixFirstNorm = matrixFirst.normInf();
-        double matrixSecondNorm = matrixSecond.normInf();
+        matrixFirstNorm = matrixFirst.normInf();
+        matrixSecondNorm = matrixSecond.normInf();
         posterioriEps = (1.0 - matrixFirstNorm) * eps / (matrixSecondNorm);
     }
 
     private int counter = 0;
     @Override
     protected Matrix countNext() {
+        if (matrixFirstNorm + matrixSecondNorm >= 1) {
+            throw new RuntimeException("Input matrix is ill-conditioned.");
+        }
+
         double sum = 0.0;
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j < n; ++j) {
